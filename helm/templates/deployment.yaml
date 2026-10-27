@@ -1,7 +1,9 @@
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vulntracker
+  namespace: vulntracker
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -65,3 +67,4 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: vulntracker-data
+```
