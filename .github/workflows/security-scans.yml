@@ -29,6 +29,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install bandit pip-audit checkov
 
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "v3.17.3"
+
+      - name: Prepare reports directory
+        run: mkdir -p reports
+
       - name: Run Bandit SAST scan
         run: |
           bandit -r app -f json -o reports/sast.bandit.json || true
@@ -37,9 +45,13 @@ jobs:
         run: |
           pip-audit -r requirements.txt -f json > reports/sca.pip-audit.json || true
 
+      - name: Render Helm chart
+        run: |
+          helm template vulntracker helm > reports/rendered-kubernetes.yaml
+
       - name: Run Checkov IaC scan
         run: |
-          checkov -d helm --framework kubernetes --output json > reports/iac.checkov.json || true
+          checkov -f reports/rendered-kubernetes.yaml --framework kubernetes --output json > reports/iac.checkov.json || true
 
       - name: Upload security reports
         if: always()
