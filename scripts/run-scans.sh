@@ -7,7 +7,10 @@ mkdir -p reports
 bandit -r app -f json -o reports/sast.bandit.json
 
 # SCA: pip-audit emits JSON; scan pinned Python requirements.
-pip-audit -r requirements.txt -f json > reports/sca.pip-audit.json\n( cd notify && npm audit --json > ../reports/sca.npm-audit.json ) || true
+pip-audit -r requirements.txt -f json > reports/sca.pip-audit.json
+
+# Node.js dependency audit.
+( cd notify && npm audit --json > ../reports/sca.npm-audit.json ) || true
 
 # Container: requires a working Docker daemon and Trivy installed.
 docker build -t vulntracker-api:assignment .
