@@ -53,7 +53,8 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
