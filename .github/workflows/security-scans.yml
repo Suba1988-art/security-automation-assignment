@@ -41,9 +41,10 @@ jobs:
         run: |
           bandit -r app -f json -o reports/sast.bandit.json || true
 
-      - name: Run Python dependency scan
+      - name: Run Node.js dependency scan
+        working-directory: notify
         run: |
-          pip-audit -r requirements.txt -f json > reports/sca.pip-audit.json || true
+          npm audit --json > ../reports/sca.npm-audit.json || true
 
       - name: Render Helm chart
         run: |
@@ -60,7 +61,8 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: vulntracker-api:local
-          format: table
+          format: json
+          output: reports/container.trivy.json
           exit-code: '0'
           severity: CRITICAL,HIGH
 
