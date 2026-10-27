@@ -1,0 +1,50 @@
+name: Security Scans
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  security-scans:
+    name: Run Security Scans
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit pip-audit checkov
+
+      - name: Run Bandit SAST scan
+        run: |
+          bandit -r app -f json -o reports/sast.bandit.json || true
+
+      - name: Run Python dependency scan
+        run: |
+          pip-audit -r requirements.txt -f json > reports/sca.pip-audit.json || true
+
+      - name: Run Checkov IaC scan
+        run: |
+          checkov -d helm --framework kubernetes --output json > reports/iac.checkov.json || true
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-reports
+          path: reports/*.json
+          if-no-files-found: warn
