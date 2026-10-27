@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: YOUR_REGISTRY/vulntracker-api
+  repository: ghcr.io/suba1988-art/vulntracker-api
   tag: "1.0.0"
   pullPolicy: Always
 
