@@ -147,9 +147,11 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user or not verify_password(payload.password, user.hashed_password):
         logger.warning("Failed login for username: %s", payload.username)
         raise HTTPException(status_code=401, detail="Incorrect username or password")
+
     token = create_access_token({"sub": user.username})
+
     # nosec B105 - "bearer" is the OAuth token type, not a hardcoded password.
-return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer"}
 
 
 # ---------------------------------------------------------------------------
