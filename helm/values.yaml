@@ -1,15 +1,19 @@
 replicaCount: 2
+
 image:
   repository: YOUR_REGISTRY/vulntracker-api
   tag: "1.0.0"
   pullPolicy: Always
+
 service:
   port: 8000
+
 ingress:
   enabled: false
   className: nginx
   host: vulntracker.example.com
   tlsSecret: vulntracker-tls
+
 resources:
   requests:
     cpu: 100m
